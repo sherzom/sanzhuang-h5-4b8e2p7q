@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>散装组 · 培训资料库</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    background: #F4F7FB; color: #1F2D3D; min-height: 100dvh;
+    display: flex; flex-direction: column;
+  }
+  .wrap {
+    flex: 1; display: flex; flex-direction: column;
+    max-width: 560px; width: 100%; margin: 0 auto;
+    padding: 0 12px calc(10px + env(safe-area-inset-bottom));
+  }
+
+  /* ===== 头部（紧凑） ===== */
+  .hero {
+    background: linear-gradient(135deg, #4AA3FF 0%, #1C6FDB 70%);
+    padding: calc(6px + env(safe-area-inset-top)) 14px 6px;
+    color: #fff; flex-shrink: 0;
+  }
+  .hero-inner { max-width: 560px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .hero h1 { font-size: 16px; font-weight: 700; letter-spacing: .3px; line-height: 1.2; }
+  .hero .sub { margin-top: 2px; font-size: 10.5px; opacity: .92; }
+  .hero .sub b { font-weight: 700; }
+  .logo-box { background: #fff; border-radius: 9px; padding: 3px 7px; flex-shrink: 0; box-shadow: 0 2px 8px rgba(9, 61, 122, .25); }
+  .logo-box img { display: block; height: 22px; width: auto; }
+
+  /* ===== 搜索（紧凑） ===== */
+  .search { margin: 4px 0 3px; position: relative; flex-shrink: 0; }
+  .search input {
+    width: 100%; border: 1.5px solid #E2EAF4; background: #fff; border-radius: 9px;
+    padding: 6px 10px 6px 28px; font-size: 12px; color: #1F2D3D; outline: none;
+    transition: border-color .15s;
+  }
+  .search input:focus { border-color: #1C6FDB; }
+  .search input::placeholder { color: #A3B1C2; }
+  .search .ico { position: absolute; left: 9px; top: 50%; transform: translateY(-50%); color: #A3B1C2; font-size: 11px; }
+
+  /* ===== 主体：撑满视口高度，长屏不留白 ===== */
+  main#list { flex: 1; display: flex; flex-direction: column; }
+
+  /* ===== 域分区（高度按文件数加权伸缩） ===== */
+  .domain {
+    background: #fff; border: 1px solid #E8EEF6; border-radius: 10px;
+    padding: 4px 8px 5px; margin-top: 3px;
+    display: flex; flex-direction: column;
+  }
+  .dom-head {
+    display: flex; align-items: center; gap: 5px;
+    padding: 0 1px 3px; margin-bottom: 2px; border-bottom: 1px solid #F0F4F9; flex-shrink: 0;
+  }
+  .dom-ic { width: 18px; height: 18px; border-radius: 5px; padding: 3px; flex-shrink: 0; }
+  .dom-title { font-size: 12.5px; font-weight: 700; white-space: nowrap; }
+  .cnt { font-size: 9.5px; font-weight: 600; color: #1C6FDB; background: #E3EFFC; border-radius: 999px; padding: 0 5px; }
+  .dom-desc { font-size: 9.5px; color: #8FA3BC; margin-left: auto; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  /* ===== 文件行（可随屏高伸缩，封顶 48px） ===== */
+  .frow { display: flex; align-items: center; gap: 6px; padding: 1.5px 1px; cursor: pointer; flex: 1 1 0; max-height: 48px; }
+  .frow:active { background: #F7FAFD; }
+  .badge {
+    flex-shrink: 0; width: 26px; height: 17px; border-radius: 4px;
+    font-size: 8.5px; font-weight: 700; display: flex; align-items: center; justify-content: center;
+  }
+  .badge.pdf { background: #FDECEA; color: #E8443A; }
+  .badge.ppt { background: #FFF1DE; color: #F0821E; }
+  .badge.xls { background: #E6F6E8; color: #3FA34D; }
+  .frow-t { flex: 1; min-width: 0; }
+  .fname {
+    font-size: 11px; font-weight: 600; line-height: 1.2; white-space: nowrap;
+    overflow: hidden; text-overflow: ellipsis;
+  }
+  .fintro {
+    font-size: 9.5px; color: #64748F; line-height: 1.15; white-space: nowrap;
+    overflow: hidden; text-overflow: ellipsis;
+  }
+  .fmeta { color: #B4C0CF; }
+  .frow-a { flex-shrink: 0; display: flex; gap: 4px; }
+  .mini {
+    border: none; border-radius: 5px; font-size: 10px; font-weight: 600;
+    padding: 3px 8px; cursor: pointer; font-family: inherit; white-space: nowrap;
+  }
+  .mini.dl { color: #fff; }
+  .mini.dl:active { filter: brightness(.88); }
+  .mini.dl:disabled { opacity: .65; }
+
+  .empty { text-align: center; color: #8FA3BC; font-size: 12px; padding: 26px 0 16px; display: none; }
+
+  footer { text-align: center; color: #A3B1C2; font-size: 9px; margin-top: 2px; flex-shrink: 0; }
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="hero-inner">
+    <div>
+      <h1>散装组 · 培训资料库</h1>
+      <p class="sub">按系统域分类 · 共 <b>12</b> 份资料 · <b>6</b> 个域</p>
+    </div>
+    <div class="logo-box"><img src="assets/logo.png" alt="散装组"></div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="search">
+    <span class="ico">&#128269;</span>
+    <input id="search" type="search" placeholder="搜索资料名称或简介…">
+  </div>
+  <main id="list">
+  <section class="domain" id="dom-zuzhi" style="flex-grow:1;flex-shrink:0">
+    <div class="dom-head">
+      <svg class="dom-ic" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="background:#3B82F61F"><path d="M3 9.5 12 3l9 6.5V20a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 13 15 13 15 22"/></svg>
+      <span class="dom-title">组织管理域</span>
+      <span class="cnt">1</span>
+      <span class="dom-desc">组织架构、岗位、编制与薪酬管理</span>
+    </div>
+    
+        <div class="frow" data-name="26年q4 散装组薪资方案 大区总监.xlsx 薪资方案 大区总监.xlsx 规定散装组大区/省区/区域总监、区域经理各岗位底薪职级、绩效奖金与晋升降级调薪规则，另含编制管控、目标设置与汰换、货需及窜货等扣罚标准与品项提成系数。">
+          <span class="badge xls">XLS</span>
+          <div class="frow-t">
+            <div class="fname">薪资方案 大区总监.xlsx</div>
+            <div class="fintro">规定散装组大区/省区/区域总监、区域经理各岗位底薪职级、绩效奖金与晋升降级调薪规则，另含编制管控、目标设置与汰换、货需及窜货等扣罚标准与品项提成系数。<span class="fmeta"> · 680 KB · 11月11日更新</span></div>
+          </div>
+          <div class="frow-a">
+            <button class="mini dl" data-href="files/26%E5%B9%B4Q4%20%E6%95%A3%E8%A3%85%E7%BB%84%E8%96%AA%E8%B5%84%E6%96%B9%E6%A1%88%20%E5%A4%A7%E5%8C%BA%E6%80%BB%E7%9B%91.xlsx" style="background:#3B82F6">下载</button>
+          </div>
+        </div>
+  </section>
+  <section class="domain" id="dom-renshi" style="flex-grow:2;flex-shrink:0">
+    <div class="dom-head">
+      <svg class="dom-ic" viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="background:#8B5CF61F"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="10" r="2.2"/><path d="M8.5 14.8c-2 0-3.5 1-3.5 2.3V19h7v-1.9c0-1.3-1.5-2.3-3.5-2.3z"/><path d="M14.5 9h4M14.5 12.5h4"/></svg>
+      <span class="dom-title">人事管理域</span>
+      <span class="cnt">2</span>
+      <span class="dom-desc">差旅、人事流程与办公管理</span>
+    </div>
+    
+        <div class="frow" data-name="差旅（分贝通）使用手册.pptx 差旅（分贝通）使用手册.pptx 指导员工完成出差/会议申请、分贝通订票、发票授权与差旅报销全流程操作。">
+          <span class="badge ppt">PPT</span>
+          <div class="frow-t">
+            <div class="fname">差旅（分贝通）使用手册.pptx</div>
+            <div class="fintro">指导员工完成出差/会议申请、分贝通订票、发票授权与差旅报销全流程操作。<span class="fmeta"> · 22.7 MB · 10月13日更新</span></div>
+          </div>
+          <div class="frow-a">
+            <button class="mini dl" data-href="files/%E5%B7%AE%E6%97%85%EF%BC%88%E5%88%86%E8%B4%9D%E9%80%9A%EF%BC%89%E4%BD%BF%E7%94%A8%E6%89%8B%E5%86%8C.pptx" style="background:#8B5CF6">下载</button>
+          </div>
+        </div>
+        <div class="frow" data-name="大区总监差旅方案.xlsx 大区总监差旅方案.xlsx 按季度业绩落档的成熟度明确各岗位住宿、公共交通、油补、餐补、会议与聚餐额度标准，及垫资报销与过程异常扣罚规则。">
+          <span class="badge xls">XLS</span>
+          <div class="frow-t">
+            <div class="fname">大区总监差旅方案.xlsx</div>
+            <div class="fintro">按季度业绩落档的成熟度明确各岗位住宿、公共交通、油补、餐补、会议与聚餐额度标准，及垫资报销与过程异常扣罚规则。<span class="fmeta"> · 120 KB · 11月4日更新</span></div>
+          </div>
+          <div class="frow-a">
+            <button class="mini dl" data-href="files/%E5%A4%A7%E5%8C%BA%E6%80%BB%E7%9B%91%E5%B7%AE%E6%97%85%E6%96%B9%E6%A1%88.xlsx" style="background:#8B5CF6">下载</button>
+          </div>
+        </div>
+  </section>
+  <section class="domain" id="dom-xiaoshou" style="flex-grow:2;flex-shrink:0">
+    <div class="dom-head">
+      <svg class="dom-ic" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="background:#F59E0B1F"><polyline points="22 7 13.5 15.5 9.5 11.5 2 19"/><polyline points="16 7 22 7 22 13"/></svg>
+      <span class="dom-title">销售管理域</span>
+      <span class="cnt">2</span>
+      <span class="dom-desc">销售过程管理、作业奖惩与结果追踪</span>
+    </div>
+    
+        <div class="frow" data-name="过程考核要求大区总监.xlsx 过程考核要求大区总监.xlsx 明确各业务岗位在考勤、通关、拜访、会议、报告、盘点六大模块的达标要求、稽核职责与扣罚处分标准。">
+          <span class="badge xls">XLS</span>
+          <div class="frow-t">
+            <div class="fname">过程考核要求大区总监.xlsx</div>
+            <div class="fintro">明确各业务岗位在考勤、通关、拜访、会议、报告、盘点六大模块的达标要求、稽核职责与扣罚处分标准。<span class="fmeta"> · 29 KB · 11月11日更新</span></div>
+          </div>
+          <div class="frow-a">
+            <button class="mini dl" data-href="files/%E8%BF%87%E7%A8%8B%E8%80%83%E6%A0%B8%E8%A6%81%E6%B1%82%E5%A4%A7%E5%8C%BA%E6%80%BB%E7%9B%91.xlsx" style="background:#F59E0B">下载</button>
+          </div>
+        </div>
+        <div class="frow" data-name="目标设置&amp;人员汰换规则.xlsx 目标设置&amp;人员汰换规则.xlsx 规定各层级组织与个人目标的制定、拆分、审核规则，及目标达成率考核与人员汰换特批标准。">
+          <span class="badge xls">XLS</span>
+          <div class="frow-t">
+            <div class="fname">目标设置&amp;人员汰换规则.xlsx</div>
+            <div class="fintro">规定各层级组织与个人目标的制定、拆分、审核规则，及目标达成率考核与人员汰换特批标准。<span class="fmeta"> · 1.1 MB · 11月11日更新</span></div>
+          </div>
+          <div class="frow-a">
+            <button class="mini dl" data-href="files/%E7%9B%AE%E6%A0%87%E8%AE%BE%E7%BD%AE%26%E4%BA%BA%E5%91%98%E6%B1%B0%E6%8D%A2%E8%A7%84%E5%88%99.xlsx" style="background:#F59E0B">下载</button>
+          </div>
+        </div>
+  </section>
+  <section class="domain" id="dom-kehuyunying" style="flex-grow:3;flex-shrink:0">
+    <div class="dom-head">
+      <svg class="dom-ic" viewBox="0 0 24 24" fill="none" stroke="#14B8A6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="background:#14B8A61F"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      <span class="dom-title">客户运营域</span>
+      <span class="cnt">3</span>
+      <span class="dom-desc">合伙人、品牌、门店主数据与经销商运营、合同管理</span>
+    </div>
+    
+        <div class="frow" data-name="合伙人建档&amp;关户流程.pdf 合伙人建档&amp;关户流程.pdf 合伙人建档与关户全流程操作指引，覆盖 pc/app 建档路径、审核及合作退出关户各环节。">
+          <span class="badge pdf">PDF</span>
+          <div class="frow-t">
+            <div class="fname">合伙人建档&amp;关户流程.pdf</div>
+            <div class="fintro">合伙人建档与关户全流程操作指引，覆盖 PC/APP 建档路径、审核及合作退出关户各环节。<span class="fmeta"> · 9.6 MB · 10月20日更新</span></div>
+          </div>
+          <div class="frow-a">
+            <button class="mini dl" data-href="files/%E5%90%88%E4%BC%99%E4%BA%BA%E5%BB%BA%E6%A1%A3%26%E5%85%B3%E6%88%B7%E6%B5%81%E7%A8%8B.pdf" style="background:#14B8A6">下载</button>
+          </div>
+        </div>
+        <div class="frow" data-name="合伙人建档增加客户活体识别-上线培训手册.pdf 合伙人建档增加客户活体识别-上线培训手册.pdf 讲解建档新增客户负责人活体识别的操作步骤、现场/分享确认方式与风控价值。">
+          <span class="badge pdf">PDF</span>
+          <div class="frow-t">
+            <div class="fname">合伙人建档增加客户活体识别-上线培训手册.pdf</div>
+            <div class="fintro">讲解建档新增客户负责人活体识别的操作步骤、现场/分享确认方式与风控价值。<span class="fmeta"> · 8.8 MB · 10月20日更新</span></div>
+          </div>
+          <div class="frow-a">
+            <button class="mini dl" data-href="files/%E5%90%88%E4%BC%99%E4%BA%BA%E5%BB%BA%E6%A1%A3%E5%A2%9E%E5%8A%A0%E5%AE%A2%E6%88%B7%E6%B4%BB%E4%BD%93%E8%AF%86%E5%88%AB-%E4%B8%8A%E7%BA%BF%E5%9F%B9%E8%AE%AD%E6%89%8B%E5%86%8C.pdf" style="background:#14B8A6">下载</button>
+          </div>
+        </div>
+        <div class="frow" data-name="经销合同用印操作注意事项.pdf 经销合同用印操作注意事项.pdf 经销合同线上申请与线下邮寄用印规范，含审批路径、材料清单与盖章要点。">
+          <span class="badge pdf">PDF</span>
+          <div class="frow-t">
+            <div class="fname">经销合同用印操作注意事项.pdf</div>
+            <div class="fintro">经销合同线上申请与线下邮寄用印规范，含审批路径、材料清单与盖章要点。<span class="fmeta"> · 3.8 MB · 10月20日更新</span></div>
+          </div>
+          <div class="frow-a">
+            <button class="mini dl" data-href="files/%E7%BB%8F%E9%94%80%E5%90%88%E5%90%8C%E7%94%A8%E5%8D%B0%E6%93%8D%E4%BD%9C%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9.pdf" style="background:#14B8A6">下载</button>
+          </div>
+        </div>
+  </section>
+  <section class="domain" id="dom-shangpindingdan" style="flex-grow:3;flex-shrink:0">
+    <div class="dom-head">
+      <svg class="dom-ic" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="background:#22C55E1F"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.3 7 12 12 20.7 7"/><line x1="12" y1="22" x2="12" y2="12"/></svg>
+      <span class="dom-title">商品订单域</span>
+      <span class="cnt">3</span>
+      <span class="dom-desc">商品、库存、订单、支付与政策陈列管理</span>
+    </div>
+    
+        <div class="frow" data-name="【散装组】2026年11月整体政策+产品盘价与政策力度明细表.xlsx 整体政策+产品盘价与政策力度明细表.xlsx 汇总 2026 年 11 月散装组各岗位渠道销售政策、平台下单规则及全品项盘价、政策力度与建议零售价明细。">
+          <span class="badge xls">XLS</span>
+          <div class="frow-t">
+            <div class="fname">整体政策+产品盘价与政策力度明细表.xlsx</div>
+            <div class="fintro">汇总 2026 年 11 月散装组各岗位渠道销售政策、平台下单规则及全品项盘价、政策力度与建议零售价明细。<span class="fmeta"> · 35.1 MB · 11月11日更新</span></div>
+          </div>
+          <div class="frow-a">
+            <button class="mini dl" data-href="files/%E3%80%90%E6%95%A3%E8%A3%85%E7%BB%84%E3%80%912026%E5%B9%B411%E6%9C%88%E6%95%B4%E4%BD%93%E6%94%BF%E7%AD%96%2B%E4%BA%A7%E5%93%81%E7%9B%98%E4%BB%B7%E4%B8%8E%E6%94%BF%E7%AD%96%E5%8A%9B%E5%BA%A6%E6%98%8E%E7%BB%86%E8%A1%A8.xlsx" style="background:#22C55E">下载</button>
+          </div>
+        </div>
+        <div class="frow" data-name="【散装组】2026年11月产品手册.pdf 产品手册.pdf 散装组糖果、果冻、豆果类产品导购手册，含产品卖点、规格与建议零售价。">
+          <span class="badge pdf">PDF</span>
+          <div class="frow-t">
+            <div class="fname">产品手册.pdf</div>
+            <div class="fintro">散装组糖果、果冻、豆果类产品导购手册，含产品卖点、规格与建议零售价。<span class="fmeta"> · 7.4 MB · 11月11日更新</span></div>
+          </div>
+          <div class="frow-a">
+            <button class="mini dl" data-href="files/%E3%80%90%E6%95%A3%E8%A3%85%E7%BB%84%E3%80%912026%E5%B9%B411%E6%9C%88%E4%BA%A7%E5%93%81%E6%89%8B%E5%86%8C.pdf" style="background:#22C55E">下载</button>
+          </div>
+        </div>
+        <div class="frow" data-name="平台运营大区培训内容.pdf 平台运营大区培训内容.pdf 造旺计划 app 订货工具大区培训，介绍 app 下载安装、页面功能与订货操作。">
+          <span class="badge pdf">PDF</span>
+          <div class="frow-t">
+            <div class="fname">平台运营大区培训内容.pdf</div>
+            <div class="fintro">造旺计划 APP 订货工具大区培训，介绍 APP 下载安装、页面功能与订货操作。<span class="fmeta"> · 5.1 MB · 10月20日更新</span></div>
+          </div>
+          <div class="frow-a">
+            <button class="mini dl" data-href="files/%E5%B9%B3%E5%8F%B0%E8%BF%90%E8%90%A5%E5%A4%A7%E5%8C%BA%E5%9F%B9%E8%AE%AD%E5%86%85%E5%AE%B9.pdf" style="background:#22C55E">下载</button>
+          </div>
+        </div>
+  </section>
+  <section class="domain" id="dom-gongyinglian" style="flex-grow:1;flex-shrink:0">
+    <div class="dom-head">
+      <svg class="dom-ic" viewBox="0 0 24 24" fill="none" stroke="#6366F1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="background:#6366F11F"><rect x="1" y="4" width="14" height="11" rx="1"/><polygon points="15 9 19.5 9 23 12.5 23 15 15 15"/><circle cx="5.5" cy="18.5" r="2.3"/><circle cx="18" cy="18.5" r="2.3"/></svg>
+      <span class="dom-title">供应链管理域</span>
+      <span class="cnt">1</span>
+      <span class="dom-desc">产销协同、仓储物流与客户履约</span>
+    </div>
+    
+        <div class="frow" data-name="销售预估宣导手册.pdf 销售预估宣导手册.pdf 讲解 2026 年 11 月起销售预估提报新流程（分公司提报→大区确认→全国终审）、各节点时限，及预计周转天数与销售目标的提报逻辑。">
+          <span class="badge pdf">PDF</span>
+          <div class="frow-t">
+            <div class="fname">销售预估宣导手册.pdf</div>
+            <div class="fintro">讲解 2026 年 11 月起销售预估提报新流程（分公司提报→大区确认→全国终审）、各节点时限，及预计周转天数与销售目标的提报逻辑。<span class="fmeta"> · 926 KB · 11月6日更新</span></div>
+          </div>
+          <div class="frow-a">
+            <button class="mini dl" data-href="files/%E9%94%80%E5%94%AE%E9%A2%84%E4%BC%B0%E5%AE%A3%E5%AF%BC%E6%89%8B%E5%86%8C.pdf" style="background:#6366F1">下载</button>
+          </div>
+        </div>
+  </section></main>
+  <div class="empty" id="empty">没有找到匹配的资料，换个关键词试试</div>
+  <footer>散装组内部培训资料 · 仅供内部学习使用 · 更新至 2026-11-11</footer>
+</div>
+
+<script>
+(function () {
+  var list = document.getElementById('list');
+  var sections = Array.prototype.slice.call(list.querySelectorAll('.domain'));
+  var empty = document.getElementById('empty');
+  var supportsDownload = 'download' in document.createElement('a');
+
+  function fileNameOf(href) {
+    var n = href.split('/').pop();
+    try { return decodeURIComponent(n); } catch (e) { return n; }
+  }
+
+  // 回退：直接导航（老设备无 download 属性支持时走系统 QuickLook/保存流程）
+  function directDownload(href) {
+    var a = document.createElement('a');
+    a.href = href;
+    if (supportsDownload) a.download = fileNameOf(href);
+    document.body.appendChild(a); a.click(); a.remove();
+  }
+
+  // 下载：优先 fetch + blob（页面不跳转、按钮有即时反馈）；失败回退直接导航
+  function download(href, btn) {
+    var reset = function () { if (btn) { btn.textContent = '下载'; btn.disabled = false; } };
+    if (!window.fetch || !supportsDownload || !btn) { directDownload(href); return; }
+    btn.textContent = '准备中'; btn.disabled = true;
+    fetch(href).then(function (r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.blob();
+    }).then(function (blob) {
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = fileNameOf(href);
+      document.body.appendChild(a); a.click();
+      setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 2000);
+      reset();
+    }).catch(function () { directDownload(href); reset(); });
+  }
+
+  // 下载（事件委托，按钮优先；点行内空白处也可下载）
+  list.addEventListener('click', function (e) {
+    var btn = e.target.closest('button.mini.dl');
+    if (btn) {
+      e.stopPropagation();
+      download(btn.getAttribute('data-href'), btn);
+      return;
+    }
+    var row = e.target.closest('.frow');
+    if (row) {
+      var dl = row.querySelector('button.mini.dl');
+      if (dl) dl.click();
+    }
+  });
+
+  // 搜索过滤
+  var input = document.getElementById('search');
+  input.addEventListener('input', function () {
+    var kw = input.value.trim().toLowerCase();
+    var shown = 0;
+    sections.forEach(function (sec) {
+      var vis = 0;
+      sec.querySelectorAll('.frow').forEach(function (row) {
+        var hit = !kw || row.getAttribute('data-name').indexOf(kw) > -1;
+        row.style.display = hit ? '' : 'none';
+        if (hit) vis++;
+      });
+      sec.style.display = vis ? '' : 'none';
+      if (vis) shown += vis;
+    });
+    empty.style.display = shown ? 'none' : 'block';
+  });
+})();
+</script>
+</body>
+</html>
